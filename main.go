@@ -3,10 +3,13 @@ package main
 import (
 	"github.com/EvilPhilin/SVault/controllers/vault"
 	"github.com/EvilPhilin/SVault/middleware"
+	db "github.com/EvilPhilin/SVault/models/repository"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	db.Initialize()
+
 	router := gin.Default()
 
 	router.POST("/vaults", middleware.CheckSignet, vault.CreateNewVault)
