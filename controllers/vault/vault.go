@@ -3,13 +3,30 @@ package vault
 import (
 	"net/http"
 
+	"github.com/EvilPhilin/SVault/cfg"
+	"github.com/EvilPhilin/SVault/encryptor"
+	db "github.com/EvilPhilin/SVault/models/repository"
+	"github.com/EvilPhilin/SVault/models/vault"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateNewVault(c *gin.Context) {
+	id, accessToken := uuid.New(), encryptor.CreateToken(64)
+	vault := vault.Vault{
+		ID: id.String(),
+		Path: cfg.DataPath,
+		AccessTokenDigest: encryptor.GetHash(accessToken),
+		Key: encryptor.CreateToken(64),
+	}
+
+	// TODO: Create entry in file system!
+
+	db.GetConnection().Create(&vault)
+
 	c.JSON(http.StatusCreated, gin.H{
-		"Vault's id": 			"some id",
-		"Vault's access token": "access token",
+		"Vault's id": 			id,
+		"Vault's access token": accessToken,
 	})
 }
 
