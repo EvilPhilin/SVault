@@ -1,2 +1,4 @@
 *.session.sql
 .vscode
+
+cfg/*.local.go

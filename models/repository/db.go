@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/EvilPhilin/SVault/cfg"
 	"github.com/EvilPhilin/SVault/models/vault"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,11 +18,8 @@ func GetConnection() *gorm.DB {
 }
 
 func Initialize() {
-	// Oh no, my password is compromised =(
-	dsn := "host=localhost user=go_connection dbname=svault password=5566 sslmode=disable"
 	var err error
-
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(cfg.ConnectionStr), &gorm.Config{})
 	if err != nil {
 		panic("Cant connect to db!\n" + err.Error())
 	}
