@@ -20,9 +20,19 @@ func CreateNewVault(c *gin.Context) {
 		Key: encryptor.CreateToken(64),
 	}
 
-	// TODO: Create entry in file system!
+	if err := vault.CreateFile(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Cant create file system entry",
+		})
+		c.Abort()
+	}
 
-	db.GetConnection().Create(&vault)
+	if res := db.GetConnection().Create(&vault); res.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Cant create db entry",
+		})
+		c.Abort()
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"Vault's id": 			id,
