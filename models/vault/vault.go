@@ -16,7 +16,7 @@ type Vault struct {
     Path 				string `gorm:"type:varchar(150);not null"`
 }
 
-func (v *Vault) CreateFile() (error) {
+func (v *Vault) BeforeCreate(tx *gorm.DB) (err error) {
 	fullPath := filepath.Join(cfg.DataPath, v.ID)
 
 	file, err := os.Create(fullPath)
