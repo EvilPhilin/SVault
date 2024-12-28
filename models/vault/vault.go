@@ -23,7 +23,17 @@ func (v *Vault) CreateFile() (error) {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	file.Close()
 
 	return nil
+}
+
+func (v *Vault) BeforeDelete(tx *gorm.DB) (err error) {
+	fullPath := filepath.Join(cfg.DataPath, v.ID)
+
+	if err = os.Remove(fullPath); err != nil {
+		return err
+	}
+
+	return err
 }

@@ -25,6 +25,7 @@ func CreateNewVault(c *gin.Context) {
 			"error": "Cant create file system entry",
 		})
 		c.Abort()
+		return
 	}
 
 	if res := db.GetConnection().Create(&vault); res.Error != nil {
@@ -32,6 +33,7 @@ func CreateNewVault(c *gin.Context) {
 			"error": "Cant create db entry",
 		})
 		c.Abort()
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
@@ -41,41 +43,41 @@ func CreateNewVault(c *gin.Context) {
 }
 
 func DeleteVault(c *gin.Context) {
-	vId, _ := c.Get("vaultId")
-	aT, _ := c.Get("authToken")
+	v := c.Keys["vault"].(vault.Vault)
+
+	if res := db.GetConnection().Delete(&v); res.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Cant delete your vault =(",
+		})
+		c.Abort()
+		return
+	}
+
 	c.JSON(http.StatusNoContent, gin.H{
 		"message": "Deleted successfully",
-		"vault": vId,
-		"token": aT,
 	})
 }
 
 func RewriteVault(c *gin.Context) {
-	vId, _ := c.Get("vaultId")
-	aT, _ := c.Get("authToken")
+	id := c.Param("id")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Vault's content is rewritten successfully",
-		"vault": vId,
-		"token": aT,
+		"vault": id,
 	})
 }
 
 func AppendToVault(c *gin.Context) {
-	vId, _ := c.Get("vaultId")
-	aT, _ := c.Get("authToken")
+	id := c.Param("id")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Appended new data successfully",
-		"vault": vId,
-		"token": aT,
+		"vault": id,
 	})
 }
 
 func GetVaultContent(c *gin.Context) {
-	vId, _ := c.Get("vaultId")
-	aT, _ := c.Get("authToken")
+	id := c.Param("id")
 	c.JSON(http.StatusOK, gin.H{
 		"data": "Your data",
-		"vault": vId,
-		"token": aT,
+		"vault": id,
 	})
 }
